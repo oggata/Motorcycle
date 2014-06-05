@@ -38,7 +38,7 @@ var GameLayer = cc.Layer.extend({
         var playerDepX = 0;
         var playerDepY = 0;
 
-
+/*
         var tilemap = cc.TMXTiledMap.create(tmx_stage_001);
         tilemap.setPosition(0,0);
         this.mapNode.addChild(tilemap);
@@ -88,7 +88,7 @@ var GameLayer = cc.Layer.extend({
                 tileNum++;
             }
         }
-
+*/
 
 /*
         this.smoke = cc.MotionStreak.create(1,0.05,20,cc.c3b(255,0,0),s_texture);
