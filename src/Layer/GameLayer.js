@@ -15,6 +15,11 @@ var GameLayer = cc.Layer.extend({
     init:function () {
         this._super();
 
+        if ('touches' in sys.capabilities || sys.platform == "browser")
+                this.setTouchEnabled(true);
+        else if ('mouse' in sys.capabilities)
+                this.setMouseEnabled(true);
+
         this.handleRotation = 0;
 
         //3:android 4:iphone 5:ipad 100:mobile_web 101:pc_web
@@ -28,6 +33,12 @@ var GameLayer = cc.Layer.extend({
         this.setParams();
         this.setScrollView();
 
+        this.obstacles = [];
+
+        var playerDepX = 0;
+        var playerDepY = 0;
+
+
         var tilemap = cc.TMXTiledMap.create(tmx_stage_001);
         tilemap.setPosition(0,0);
         this.mapNode.addChild(tilemap);
@@ -37,7 +48,7 @@ var GameLayer = cc.Layer.extend({
         var tileWidth  = tilemap.getTileSize().width;
         var tileHeight = tilemap.getTileSize().height;
 
-        this.obstacles = [];
+        
         var tileNum = 1;
         //TiledMapEditorのレイヤーで設定した名前を取得する
         var collidableLayer = tilemap.getLayer("collision");
@@ -78,10 +89,12 @@ var GameLayer = cc.Layer.extend({
             }
         }
 
+
+/*
         this.smoke = cc.MotionStreak.create(1,0.05,20,cc.c3b(255,0,0),s_texture);
         this.smoke.setPosition(playerDepX,playerDepY);
         this.mapNode.addChild(this.smoke);
-
+*/
         //set player
         this.player = new Player(this);
         this.player.setPosition(playerDepX,playerDepY);
@@ -241,12 +254,12 @@ var GameLayer = cc.Layer.extend({
         if(this.handleRotation < -10){
             this.player.angle +=2;
         }
-
+/*
         this.smoke.setPosition(
             this.player.getPosition().x,
             this.player.getPosition().y - 7
         );
-
+*/
 
 
 
