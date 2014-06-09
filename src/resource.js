@@ -17,6 +17,10 @@ var s_handle             = "ui/handle.png";
 var s_race             = "map/race.png";
 var tmx_stage_001      = "map/stage004.tmx";
 
+var chara001 = "sprite/honey01.png";
+var chara002 = "sprite/deus-ex-machina2012.png";
+var s_moto   = "sprite/moto.png";
+
 //json
 var charactor_json       = base_dir + "json/charactor.json";
 var stages_json          = base_dir + "json/stages.json";
@@ -105,10 +109,5 @@ var g_chara_select_resources   = [
 ];
 
 var g_resources       = [
-    s_texture,
-    s_handle,
-    s_bike2,
-    s_bike,
-    s_race,
-    tmx_stage_001
+    s_moto
 ];

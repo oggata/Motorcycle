@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 http://oggata.github.io All rights reserved.
 //
 
-var Player = cc.Node.extend({
+var Block = cc.Node.extend({
 
     ctor:function (game,depX,depY) {
         this._super();
@@ -95,8 +95,7 @@ var Player = cc.Node.extend({
         
         //キャラクターの作成
         //this.sprite = cc.PhysicsSprite.create(this.image,cc.rect(0,0,this.imgWidth,this.imgHeight));
-        this.sprite = cc.PhysicsSprite.create(s_moto);
-        this.sprite.setAnchorPoint(0.5,0);
+        this.sprite = cc.PhysicsSprite.create(s_initSprite);
         //this.sprite.runAction(this.ra);
         this.sprite.setBody(this.body);
         this.addChild(this.sprite);

@@ -29,8 +29,8 @@
     var c = {
         COCOS2D_DEBUG:1, //0 to turn debug off, 1 for basic debug, and 2 for full debug
         box2d:false,
-        chipmunk:false,
-        showFPS:false,
+        chipmunk:true,
+        showFPS:true,
         loadExtension:false,
         frameRate:30,
         renderMode:0,       //Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)
@@ -38,6 +38,7 @@
         //engineDir:'../cocos2d/',
         SingleEngineFile:'Cocos2d-html5-v2.2.3.min.js',
         appFiles:[
+        './chipmunk.js',
             'src/resource.js',
             'src/Config/GameConfig.js',
             'src/Layer/SysMenu.js',
@@ -47,6 +48,7 @@
             'src/Layer/CharaSelectLayer.js',
             'src/Layer/StaffRollLayer.js',
             'src/Sprite/Player.js',
+            'src/Sprite/Block.js',
             'src/Sprite/CutIn.js',
             'src/Sprite/GameUI.js',
             'src/Sprite/DisplayPlayer.js',
