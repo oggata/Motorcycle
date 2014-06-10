@@ -14,23 +14,28 @@ var GameLayer = cc.Layer.extend({
 
     init:function () {
         this._super();
-        this.isPushed = false;
-        this.addSpeedX = 0;
-        this.addSpeedY = 0;
+
         if ('touches' in sys.capabilities || sys.platform == "browser")
                 this.setTouchEnabled(true);
         else if ('mouse' in sys.capabilities)
                 this.setMouseEnabled(true);
-        //this.setParams();
+
+        this.isPushed  = false;
+        this.isRPushed = false;
+        this.addSpeedX = 0;
+        this.addSpeedY = 0;
+        this.addRot    = 0;
+        this.rot1      = 0;
+
         this.setScrollView();
 
         this.space = new cp.Space();
         // 壁を作る
         var walls = [
-            new cp.SegmentShape(this.space.staticBody,cp.v(0,0),cp.v(0,500),0),    // right
-            new cp.SegmentShape(this.space.staticBody,cp.v(0,500),cp.v(2000,500),0),    // right
-            new cp.SegmentShape(this.space.staticBody,cp.v(2000,500),cp.v(2000,0),0),    // right
-            new cp.SegmentShape(this.space.staticBody,cp.v(0,0),cp.v(2000,0),0),    // right
+            new cp.SegmentShape(this.space.staticBody,cp.v(0,0),cp.v(0,500),20),
+            new cp.SegmentShape(this.space.staticBody,cp.v(0,500),cp.v(2000,500),20),
+            new cp.SegmentShape(this.space.staticBody,cp.v(2000,500),cp.v(2000,0),20),
+            new cp.SegmentShape(this.space.staticBody,cp.v(0,0),cp.v(2000,0),20),
         ];
         for (var i = 0; i < walls.length; i++) {
             var shape = walls[i];
@@ -41,16 +46,16 @@ var GameLayer = cc.Layer.extend({
         this.space.gravity = cp.v(0,-98); // 下方向に重力を設定する
 
         //set player
-        this.player = new Player(this,200,300);
+        this.player = new Player(this,100,300);
         this.mapNode.addChild(this.player);
 
-        //Enemies
-        this.enemies = [];
+        //blocks
+        this.blocks = [];
         for(var i=0;i<15;i++){
-            var depX =getRandNumberFromRange(100,1800);
+            var depX =getRandNumberFromRange(200,1800);
             var depY =getRandNumberFromRange(50,100);
             this.enemy = new Block(this,depX,depY);
-            this.enemies.push(this.enemy);
+            this.blocks.push(this.enemy);
             this.mapNode.addChild(this.enemy);
         }
 
@@ -65,6 +70,39 @@ var GameLayer = cc.Layer.extend({
         );
         this.scheduleUpdate();
         this.setTouchEnabled(true);
+
+        this.button = cc.Sprite.create(s_button);
+        this.addChild(this.button);
+        this.button.setAnchorPoint(0,0);
+        this.button.setPosition(0,0);
+
+        var draw = cc.DrawNode.create();
+        this.line = draw.drawSegment(
+            cc.p(0,0),
+            cc.p(2000,0),
+            10,
+            cc.c4f(0,1,0,1)
+        );
+        this.mapNode.addChild(draw);
+
+        //カットイン
+        this.cutIn = new CutIn();
+        this.cutIn.setPosition(0,200);
+        this.addChild(this.cutIn,999);
+        this.cutIn.set_text("スタート!");
+
+        this.retryButton = new ButtonItem("RETRY",100,50,this.retry,this);
+        this.retryButton.setPosition(240,450);
+        this.addChild(this.retryButton);
+
+
+
+        //ゲージ1
+        this.gauge = new Gauge(200,20,'blue');
+        this.gauge.setPosition(50,400);
+        this.addChild(this.gauge);
+
+
         return true;
     },
 
@@ -97,25 +135,63 @@ var GameLayer = cc.Layer.extend({
     },
 
     update:function(dt){
+
+
+        this.cutIn.update();
+
         this.player.update();
 
-        //Enemies 死亡時の処理、Zソート
-        for(var i=0;i<this.enemies.length;i++){
-            this.enemies[i].update();
+        this.gauge.update( this.player.dx / this.player.maxDx );
+
+        if(this.player.isNoRun == true){
+            this.cutIn.set_text("GAME OVER");
         }
 
+        if(this.addRot > 0){
+            this.addRot-=0.2;
+        }
+        if(this.addRot < 0){
+            this.addRot+=0.2;
+        }
 
+        //blocks 死亡時の処理、Zソート
+        this.addSpeedY = 0;
+        for(var i=0;i<this.blocks.length;i++){
+            this.blocks[i].update();
+            var distance = cc.pDistance(
+                this.player.body.getPos(),this.blocks[i].body.getPos()
+            );
+            //距離が100以下 + このboxのy座標が自身より上にある場合のみ
+            if(this.player.body.getPos().y < this.blocks[i].body.getPos().y + 50){
+                if(distance < 150){
+                    this.addSpeedY = 1;
+                }
+            }
+        }
         this.moveCamera();
+
         if(this.isPushed == true){
             this.player.dx += this.addSpeedX;
             this.player.dy += this.addSpeedY;
+
         }else{
             this.player.dx = 0;
             this.player.dy = 0;
         }
-        this.space && this.space.step(dt);
-    },
 
+        if(this.isRPushed == true){
+            this.addRot += this.rot1;
+        }else{
+
+        }
+
+
+        this.space && this.space.step(dt);
+
+        if(Math.asin(this.player.body.getAngle().x) <= -0.5){
+
+        }
+    },
 
     moveCamera:function(){
         //カメラ位置はプレイヤーを追いかける
@@ -123,7 +199,7 @@ var GameLayer = cc.Layer.extend({
         this.playerCameraY = this.player.body.getPos().y + this.cameraY;
         
         this.cameraX -= this.playerCameraX - 320/2;
-        this.cameraY -= this.playerCameraY - 180;
+        this.cameraY -= this.playerCameraY - 200;
 
         this.mapNode.setPosition(
             this.cameraX,
@@ -134,15 +210,36 @@ var GameLayer = cc.Layer.extend({
 
 //デバイス入力----->
     onTouchesBegan:function (touches, event) {
-        //if(this.isToucheable() == false) return;
+        if(this.isToucheable() == false) return;
+
+        
         this.touched = touches[0].getLocation();
-        this.isPushed = true;
 
-        var touchedXRate = (160 - this.touched.x) / 160;
-        this.addSpeedX = 1 * touchedXRate;
+        if(20 <= this.touched.x && this.touched.x <= 60 &&
+            10 <= this.touched.y && this.touched.y <= 50){
+            playSE();
+            this.isPushed = true;
+            this.addSpeedX = -1;
+        }
 
-        var touchedYRate = (240 - this.touched.y) / 240;
-        this.addSpeedY = 1 * touchedYRate;
+        if(90 <= this.touched.x && this.touched.x <= 130 &&
+            10 <= this.touched.y && this.touched.y <= 50){
+            playSE();
+            this.isPushed = true;
+            this.addSpeedX = 1;
+        }
+
+        if(180 <= this.touched.x && this.touched.x <= 225 &&
+            10 <= this.touched.y && this.touched.y <= 50){
+            this.isRPushed = true;
+            this.rot1+=1;
+        }
+
+        if(250 <= this.touched.x && this.touched.x <= 300 &&
+            10 <= this.touched.y && this.touched.y <= 50){
+            this.isRPushed = true;
+            this.rot1-=1;
+        }
     },
 
     onTouchesMoved:function (touches, event) {
@@ -152,9 +249,12 @@ var GameLayer = cc.Layer.extend({
 
     onTouchesEnded:function (touches, event) {
         this.player.isCanMove = true;
-        this.isPushed = false;
+        this.isPushed  = false;
+        this.isRPushed = false;
         this.addSpeedX = 0;
-        this.addSpeedY = 0;
+        this.rot1      = 0;
+        //this.addSpeedY = 0;
+        stopSE();
     },
 
     onTouchesCancelled:function (touches, event) {
@@ -185,6 +285,15 @@ var GameLayer = cc.Layer.extend({
         }
     },
 
+    retry:function() {
+        this.player.body.setPos(
+            cp.v(100,300)
+        );
+        this.player.isNoRun = false;
+        this.player.body.setAngle(0);
+    },
+
+
     goGameOverLayer:function (pSender) {
         this.storage.calcTotal();
 
@@ -207,6 +316,9 @@ var GameLayer = cc.Layer.extend({
     },
 
     isToucheable:function (){
+        if(this.player.isNoRun == true){
+            return false;
+        }
         return true;
     },
 
@@ -219,7 +331,6 @@ var GameLayer = cc.Layer.extend({
         loaderScene._logoTexture.height = 100;
         cc.LoaderScene._instance = loaderScene;
     }
-
 });
 
 GameLayer.create = function (storage) {

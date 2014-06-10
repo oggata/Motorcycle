@@ -1424,6 +1424,8 @@
     Body.prototype.getPos = function() { return this.p; };
     Body.prototype.getVel = function() { return new Vect(this.vx, this.vy); };
     Body.prototype.getAngVel = function() { return this.w; };
+Body.prototype.getAngle = function() { return this.rot; };
+
 
 /// Returns true if the body is sleeping.
     Body.prototype.isSleeping = function()

@@ -12,6 +12,8 @@ var s_texture            = "ui/texture.png";
 var s_bike               = "sprite/bike.png";
 var s_bike2              = "sprite/bike2.png"; //44.5 62.25
 var s_handle             = "ui/handle.png";
+
+var s_box                = "sprite/box.png";
 //cocos2d: TMXFomat: Unsupported orientation:null 
 
 var s_race             = "map/race.png";
@@ -20,6 +22,16 @@ var tmx_stage_001      = "map/stage004.tmx";
 var chara001 = "sprite/honey01.png";
 var chara002 = "sprite/deus-ex-machina2012.png";
 var s_moto   = "sprite/moto.png";
+
+var s_button_right   = "ui/right.png";
+var s_button_left   = "ui/left.png";
+var s_button_mae   = "ui/mae.png";
+var s_button_ushiro   = "ui/ushiro.png";
+var s_button   = "ui/button.png";
+
+var s_circle  = "map/circle.png";
+var s_rider   = "sprite/rider.png";
+
 
 //json
 var charactor_json       = base_dir + "json/charactor.json";
@@ -88,6 +100,8 @@ var s_se_coin            = base_dir + "res/sound/se/se_maoudamashii_system47.mp3
 var s_se_attack          = base_dir + "res/sound/se/se_maoudamashii_battle01.mp3";
 var s_se_system          = base_dir + "res/sound/se/se_maoudamashii_system23.mp3";
 
+var s_bike               = base_dir + "res/sound/se/bike-start-up1.mp3";
+
 var g_system_resources   = [
     enemy_json,
     stages_json,
@@ -109,5 +123,14 @@ var g_chara_select_resources   = [
 ];
 
 var g_resources       = [
-    s_moto
+    s_moto,
+    s_box,
+s_button_right,
+s_button_left,
+s_button_mae,
+s_button_ushiro,
+s_button,
+s_circle,
+s_rider,
+s_bike
 ];

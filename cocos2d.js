@@ -50,16 +50,15 @@
             'src/Sprite/Player.js',
             'src/Sprite/Block.js',
             'src/Sprite/CutIn.js',
+            'src/Sprite/Gauge.js',
             'src/Sprite/GameUI.js',
             'src/Sprite/DisplayPlayer.js',
-            'src/Sprite/Chip.js',
             'src/Sprite/Button.js',
             'src/Util/HttpClient.js',
             'src/Util/Calc.js',
             'src/Util/Storage.js',
             'src/Util/Sound.js',
             'src/Util/Label.js',
-            'src/Manager/Collision.js',
         ]
     };
 

@@ -6,6 +6,16 @@
 //  Copyright (c) 2014 http://oggata.github.io All rights reserved.
 //
 
+// Converts from degrees to radians.
+var getRadians = function(degrees) {
+  return degrees * Math.PI / 180;
+};
+ 
+// Converts from radians to degrees.
+var getDegrees = function(radians) {
+  return radians * 180 / Math.PI;
+};
+
 var getDistance = function(x1,y1,x2,y2){
     var dirX = x1 - x2;
     var dirY = y1 - y2;
