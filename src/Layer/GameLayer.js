@@ -20,6 +20,7 @@ var GameLayer = cc.Layer.extend({
         else if ('mouse' in sys.capabilities)
                 this.setMouseEnabled(true);
 
+        this.isPushedCnt = 0;
         this.isPushed  = false;
         this.isRPushed = false;
         this.addSpeedX = 0;
@@ -43,7 +44,7 @@ var GameLayer = cc.Layer.extend({
             shape.setFriction(0.1);   //摩擦
             this.space.addStaticShape(shape);
         }
-        this.space.gravity = cp.v(0,-98); // 下方向に重力を設定する
+        this.space.gravity = cp.v(0,-200); // 下方向に重力を設定する
 
         //set player
         this.player = new Player(this,100,300);
@@ -51,10 +52,30 @@ var GameLayer = cc.Layer.extend({
 
         //blocks
         this.blocks = [];
+
+        this.posArray = [
+            [400,100],
+            [450,100],
+            [450,200],
+            [500,100],
+            [500,200],
+            [500,300],
+            [550,100],
+            [550,200],
+            [550,300],
+            [550,400],
+        ];
+
+        for(var i=0;i<this.posArray.length;i++){
+            this.enemy = new Block(this,this.posArray[i][0],this.posArray[i][1],"pos");
+            this.blocks.push(this.enemy);
+            this.mapNode.addChild(this.enemy);
+        }
+
         for(var i=0;i<15;i++){
-            var depX =getRandNumberFromRange(200,1800);
+            var depX =getRandNumberFromRange(600,1500);
             var depY =getRandNumberFromRange(50,100);
-            this.enemy = new Block(this,depX,depY);
+            this.enemy = new Block(this,depX,depY,"rand");
             this.blocks.push(this.enemy);
             this.mapNode.addChild(this.enemy);
         }
@@ -80,7 +101,7 @@ var GameLayer = cc.Layer.extend({
         this.line = draw.drawSegment(
             cc.p(0,0),
             cc.p(2000,0),
-            10,
+            20,
             cc.c4f(0,1,0,1)
         );
         this.mapNode.addChild(draw);
@@ -95,13 +116,10 @@ var GameLayer = cc.Layer.extend({
         this.retryButton.setPosition(240,450);
         this.addChild(this.retryButton);
 
-
-
         //ゲージ1
         this.gauge = new Gauge(200,20,'blue');
         this.gauge.setPosition(50,400);
         this.addChild(this.gauge);
-
 
         return true;
     },
@@ -136,11 +154,15 @@ var GameLayer = cc.Layer.extend({
 
     update:function(dt){
 
+        if(this.isPushedCnt >= 1){
+            this.isPushedCnt++;
+            if(this.isPushedCnt>=20){
+                this.isPushedCnt = 0;
+            }
+        }
 
         this.cutIn.update();
-
         this.player.update();
-
         this.gauge.update( this.player.dx / this.player.maxDx );
 
         if(this.player.isNoRun == true){
@@ -169,28 +191,21 @@ var GameLayer = cc.Layer.extend({
             }
         }
         this.moveCamera();
-
         if(this.isPushed == true){
             this.player.dx += this.addSpeedX;
-            this.player.dy += this.addSpeedY;
-
+            if(this.isPushedCnt>=1){
+                this.player.dy+=this.addSpeedY;
+            }else{
+                this.player.dy = 0;
+            }
         }else{
             this.player.dx = 0;
             this.player.dy = 0;
         }
-
         if(this.isRPushed == true){
             this.addRot += this.rot1;
-        }else{
-
         }
-
-
         this.space && this.space.step(dt);
-
-        if(Math.asin(this.player.body.getAngle().x) <= -0.5){
-
-        }
     },
 
     moveCamera:function(){
@@ -220,6 +235,8 @@ var GameLayer = cc.Layer.extend({
             playSE();
             this.isPushed = true;
             this.addSpeedX = -1;
+
+            this.isPushedCnt = 1;
         }
 
         if(90 <= this.touched.x && this.touched.x <= 130 &&
@@ -227,6 +244,8 @@ var GameLayer = cc.Layer.extend({
             playSE();
             this.isPushed = true;
             this.addSpeedX = 1;
+
+            this.isPushedCnt = 1;
         }
 
         if(180 <= this.touched.x && this.touched.x <= 225 &&

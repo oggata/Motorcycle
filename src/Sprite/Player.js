@@ -12,7 +12,7 @@ var Player = cc.Node.extend({
         this._super();
         this.game              = game;
         this.storage           = this.game.storage;
-        this.maxDx             = 5;
+        this.maxDx             = 10;
         this.dx                = 0;
         this.dy                = 0;
         this.depX              = depX;
@@ -49,9 +49,12 @@ var Player = cc.Node.extend({
                 this.body.getPos().y + this.dy
             )
         );
+        
         if(Math.asin(this.body.getAngle().x) <= -0.28){
-            this.body.setAngle(600);
+            this.body.setAngle(180 / 180 * Math.PI);
+            this.rider.setRotation(180 / 180 * Math.PI);
             this.isNoRun = true;
+            return;
         };
 
         this.rider.setPosition(
@@ -59,7 +62,17 @@ var Player = cc.Node.extend({
             this.body.getPos().y
         );
 
-        this.degrees = (getDegrees(Math.asin(this.body.getAngle().x)) - 90 + this.game.addRot) * 1;
+        //var rad = 60;
+        //this.body.setAngle(rad / 180 * Math.PI);
+        /*
+        cc.log(
+            "degrees:" + 
+            Math.floor(getDegrees(Math.asin(this.body.getAngle().y))-90) + 
+            "dx" + 
+            this.dx
+        );
+        */
+        this.degrees = (getDegrees(Math.acos(this.body.getAngle().y)) + this.game.addRot - 90);
         this.rider.setRotation(this.degrees);
     },
 
@@ -68,6 +81,7 @@ var Player = cc.Node.extend({
     },
 
     initializeAnimation:function(){
+        /*
         var frameSeq = [];
         for (var i = 0; i < 3; i++) {
             var frame = cc.SpriteFrame.create(this.image,cc.rect(this.imgWidth*i,this.imgHeight*0,this.imgWidth,this.imgHeight));
@@ -75,9 +89,9 @@ var Player = cc.Node.extend({
         }
         this.wa = cc.Animation.create(frameSeq,0.2);
         this.ra = cc.RepeatForever.create(cc.Animate.create(this.wa));
-
+        */
         this.body = new cp.Body(
-            5,
+            3,
             cp.momentForBox(10,10,10)
         );
         this.body.setPos(cp.v(this.depX,this.depY));
@@ -89,7 +103,6 @@ var Player = cc.Node.extend({
         this.game.space.addShape(this.shape);
         
         //キャラクターの作成
-        //this.sprite = cc.PhysicsSprite.create(this.image,cc.rect(0,0,this.imgWidth,this.imgHeight));
         this.sprite = cc.PhysicsSprite.create(s_moto);
         this.sprite.setAnchorPoint(0.5,0.3);
         //this.sprite.runAction(this.ra);
@@ -101,10 +114,11 @@ var Player = cc.Node.extend({
         this.rider.setPosition(this.body.getPos().x,this.body.getPos().y);
         this.addChild(this.rider);
 
+/*
         this._debugNode = cc.PhysicsDebugNode.create(this.game.space);
         this._debugNode.setVisible(true);
         this.addChild(this._debugNode);
-
+*/
         //デバッグ
         if(CONFIG.DEBUG_FLAG==1){
             this.sigh = cc.LayerColor.create(cc.c4b(255,0,0,255),3,3);

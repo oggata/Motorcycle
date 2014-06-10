@@ -13,7 +13,8 @@ var s_bike               = "sprite/bike.png";
 var s_bike2              = "sprite/bike2.png"; //44.5 62.25
 var s_handle             = "ui/handle.png";
 
-var s_box                = "sprite/box.png";
+var s_box                = "map/box.png";
+var s_box2                = "map/box2.png";
 //cocos2d: TMXFomat: Unsupported orientation:null 
 
 var s_race             = "map/race.png";
@@ -132,5 +133,6 @@ s_button_ushiro,
 s_button,
 s_circle,
 s_rider,
-s_bike
+s_bike,
+s_box2
 ];
